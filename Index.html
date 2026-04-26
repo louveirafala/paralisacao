@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Itinerário Interativo - Louveira</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #0056b3;
+            border-bottom: 3px solid #0056b3;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+            vertical-align: middle;
+        }
+        th {
+            background-color: #0056b3;
+            color: #ffffff;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #e2e6ea;
+        }
+        td strong {
+            color: #0056b3;
+        }
+        .obs {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        
+        /* Estilo para a linha destacada (onde o usuário está) */
+        .linha-atual {
+            background-color: #d4edda !important;
+            border: 2px solid #28a745;
+        }
+        .linha-atual td {
+            color: #155724;
+            font-weight: bold;
+        }
+
+        .btn-checkin {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: 0.3s;
+        }
+        .btn-checkin:hover { background-color: #5a6268; }
+        .linha-atual .btn-checkin {
+            background-color: #28a745;
+            cursor: default;
+        }
+
+        .map-section {
+            text-align: center;
+            padding: 25px;
+            background-color: #e9ecef;
+            border-radius: 8px;
+        }
+        
+        .geo-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #17a2b8;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1em;
+            cursor: pointer;
+            margin-bottom: 15px;
+            transition: background-color 0.3s;
+        }
+        .geo-btn:hover { background-color: #138496; }
+
+        .map-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #28a745;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        .map-button:hover { background-color: #218838; }
+        .geo-status {
+            font-size: 0.95em;
+            color: #d32f2f;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📍 Itinerário Interativo - Louveira</h1>
+    <p style="text-align: center; color: #555; margin-bottom: 25px;">
+        Clique em "Estou Aqui" para marcar em qual etapa do trajeto você se encontra no momento.
+    </p>
+
+    <table id="tabela-itinerario">
+        <thead>
+            <tr>
+                <th>Status</th>
+                <th>Ponto de Referência / Instituição</th>
+                <th>Via / Logradouro</th>
+                <th>Observações e Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><button class="btn-checkin" onclick="marcarLocal(this)">📍 Estou Aqui</button></td>
+                <td><strong>Início:</strong> Sec. Educação / Cecoin</td>
+                <td>Praça Pe. Pedro Sanches</td>
+                <td class="obs">Ponto de partida oficial.</td>
+            </tr>
+            <tr>
+                <td><button class="btn-checkin" onclick="marcarLocal(this)">📍 Estou Aqui</button></td>
+                <td>Trajeto</td>
+                <td>Rua Nerina</td>
+                <td class="obs">Seguir trajeto.</td>
+            </tr>
+            <tr>
+                <td><button class="btn-checkin" onclick="marcarLocal(this)">📍 Estou Aqui</button></td>
+                <td>UBS PAS</td>
+                <td>Rua São Carlos</td>
+                <td class="obs">Referência de saúde.</td>
+            </tr>
+            <tr>
+                <td><button class="btn-checkin" onclick="marcarLocal(this)">📍 Estou Aqui</button></td>
+                <td>Trajeto</td>
+                <td>Rua Roberto Mazalli</td>
+                <td class="obs">Seguir trajeto.</td>
+            </tr>
+            <tr>
+                <td><button class="btn-checkin" onclick="marcarLocal(this)">📍 Estou Aqui</button></td>
+                <td>VISA / Habitação / Cartão Cidadão</td>
+                <td>Rua Antonio Chicalhone</td>
+                <td class="obs"><strong>Parada:</strong> Centro de Atendimento (Correios).</td>
+            </tr>
+            <tr>
+                <td><button class="btn-checkin" onclick="marcarLocal(this)">📍 Estou Aqui</button></td>
+                <td>Eixo Principal</td>
+                <td>Av. Paulo Prado</td>
+                <td class="obs">Seguir trajeto.</td>
+            </tr>
+            <tr>
+                <td><button class="btn-checkin" onclick="marcarLocal(this)">📍 Estou Aqui</button></td>
+                <td>Sindlouv / EMEB Peq. Brilhantes</td>
+                <td>Av. Ricieri Chiquetto</td>
+                <td class="obs"><strong>Referência:</strong> Auto Escola.</td>
+            </tr>
+            <tr>
+                <td><button class="btn-checkin" onclick="marcarLocal(this)">📍 Estou Aqui</button></td>
+                <td>Defesa Civil / Trânsito</td>
+                <td>Praça da Bica</td>
+                <td class="obs">Próximo à EMEB Mundo Maravilhoso.</td>
+            </tr>
+            <tr>
+                <td><button class="btn-checkin" onclick="marcarLocal(this)">📍 Estou Aqui</button></td>
+                <td>CRAS Santo Antônio</td>
+                <td>Rua Leone Bertoline</td>
+                <td class="obs">Assistência social.</td>
+            </tr>
+            <tr>
+                <td><button class="btn-checkin" onclick="marcarLocal(this)">📍 Estou Aqui</button></td>
+                <td>Fundo Social de Solidariedade</td>
+                <td>Rotatória</td>
+                <td class="obs"><strong>Ponto de Fala:</strong> Número de funcionários.</td>
+            </tr>
+            <tr>
+                <td><button class="btn-checkin" onclick="marcarLocal(this)">📍 Estou Aqui</button></td>
+                <td>Casa da Cultura</td>
+                <td>Rua das Rosas</td>
+                <td class="obs">Avaliar barulho.</td>
+            </tr>
+            <tr>
+                <td><button class="btn-checkin" onclick="marcarLocal(this)">📍 Estou Aqui</button></td>
+                <td><strong>Encerramento</strong></td>
+                <td>Praça da Bica</td>
+                <td class="obs">Finalização do percurso.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="map-section">
+        <h3>📡 Conectar ao meu GPS</h3>
+        <p>Use a antena do seu celular ou computador para criar a rota de onde você está agora até o itinerário.</p>
+        
+        <div id="geo-status" class="geo-status">Localização ainda não capturada.</div>
+        
+        <button class="geo-btn" onclick="buscarLocalizacao()">
+            🛰️ Encontrar Minha Localização Atual
+        </button>
+        <br>
+        
+        <a id="link-mapa" href="https://www.google.com/maps/dir/?api=1&destination=Praça+Pe.+Pedro+Sanches,+Louveira,+SP" target="_blank" class="map-button">
+            🗺️ Abrir Rota no Google Maps
+        </a>
+    </div>
+</div>
+
+<script>
+    // Função para marcar onde a pessoa está na tabela
+    function marcarLocal(botao) {
+        // Remove a marcação de todas as linhas
+        let linhas = document.querySelectorAll('#tabela-itinerario tbody tr');
+        linhas.forEach(linha => {
+            linha.classList.remove('linha-atual');
+            let btn = linha.querySelector('.btn-checkin');
+            btn.innerHTML = "📍 Estou Aqui";
+        });
+
+        // Adiciona a marcação na linha clicada
+        let linhaClicada = botao.parentElement.parentElement;
+        linhaClicada.classList.add('linha-atual');
+        botao.innerHTML = "✅ Você está aqui";
+    }
+
+    // Função para buscar o GPS do usuário via navegador
+    function buscarLocalizacao() {
+        let statusTexto = document.getElementById("geo-status");
+        statusTexto.innerHTML = "⏳ Buscando sinal de GPS... Por favor, permita o acesso.";
+        statusTexto.style.color = "#ff9800";
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(sucessoGPS, erroGPS);
+        } else {
+            statusTexto.innerHTML = "❌ Seu navegador não suporta geolocalização.";
+            statusTexto.style.color = "#d32f2f";
+        }
+    }
+
+    // Se conseguir pegar a localização do usuário
+    function sucessoGPS(posicao) {
+        let lat = posicao.coords.latitude;
+        let lon = posicao.coords.longitude;
+        
+        let statusTexto = document.getElementById("geo-status");
+        statusTexto.innerHTML = "✅ Sinal encontrado! O mapa foi atualizado com a sua posição exata.";
+        statusTexto.style.color = "#28a745";
+
+        // Atualiza o link do Google Maps para traçar rota da localização atual do usuário até a Praça
+        let linkMapa = document.getElementById("link-mapa");
+        linkMapa.href = `https://www.google.com/maps/dir/?api=1&origin=${lat},${lon}&destination=Praça+Pe.+Pedro+Sanches,+Louveira,+SP`;
+        linkMapa.innerHTML = "🗺️ Iniciar Rota a partir daqui";
+    }
+
+    // Se der erro ao tentar pegar a localização
+    function erroGPS(erro) {
+        let statusTexto = document.getElementById("geo-status");
+        statusTexto.style.color = "#d32f2f";
+        switch(erro.code) {
+            case erro.PERMISSION_DENIED:
+                statusTexto.innerHTML = "❌ Você negou o pedido de localização.";
+                break;
+            case erro.POSITION_UNAVAILABLE:
+                statusTexto.innerHTML = "❌ Informações de localização indisponíveis.";
+                break;
+            case erro.TIMEOUT:
+                statusTexto.innerHTML = "❌ A requisição demorou muito para responder.";
+                break;
+            default:
+                statusTexto.innerHTML = "❌ Ocorreu um erro desconhecido no GPS.";
+                break;
+        }
+    }
+</script>
+
+</body>
+</html>
