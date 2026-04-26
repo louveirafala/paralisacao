@@ -26,14 +26,380 @@
             color: #0056b3;
             border-bottom: 3px solid #0056b3;
             padding-bottom: 10px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             font-size: 1.5em;
         }
         
+        /* Quadro de Horários em Destaque */
+        .alerta-horario {
+            background-color: #fff3cd;
+            border: 2px solid #ffeeba;
+            border-left: 6px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+            color: #856404;
+            font-size: 1.1em;
+        }
+        .alerta-horario span {
+            display: inline-block;
+            margin: 5px 10px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 30px;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+            vertical-align: middle;
+        }
+        th {
+            background-color: #0056b3;
+            color: #ffffff;
+            font-weight: 600;
+        }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        
+        /* Destaque da linha atual gerenciada por código */
+        .linha-atual {
+            background-color: #d4edda !important;
+            border: 2px solid #28a745;
+        }
+        .linha-atual td {
+            color: #155724;
+            font-weight: bold;
+        }
+        .tag-aqui {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .obs { font-size: 0.9em; color: #6c757d; }
+
+        /* Painel de Botões Fixos */
+        .painel-fixo {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.15);
+            padding: 15px;
+            box-sizing: border-box;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .btn-acao {
+            flex: 1;
+            max-width: 400px;
+            border: none;
+            padding: 15px 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1em;
+            cursor: pointer;
+            transition: 0.3s;
+            text-align: center;
+            color: white;
+        }
+        .btn-atual { background-color: #17a2b8; }
+        .btn-atual:hover { background-color: #138496; }
+        .btn-completa { background-color: #6c757d; }
+        .btn-completa:hover { background-color: #5a6268; }
+
+        /* Ajustes Mobile (Cards) */
+        @media screen and (max-width: 768px) {
+            table { border: 0; }
+            table thead { display: none; }
+            table tr {
+                display: block;
+                margin-bottom: 20px;
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+                background-color: #fff;
+                padding-bottom: 10px;
+            }
+            table td {
+                display: block;
+                text-align: right;
+                font-size: 0.95em;
+                border-bottom: 1px solid #eee;
+                padding-left: 45%;
+                position: relative;
+            }
+            table td:last-child { border-bottom: 0; }
+            table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 15px;
+                width: 40%;
+                text-align: left;
+                font-weight: bold;
+                color: #0056b3;
+            }
+            .obs { text-align: right; }
+            .painel-fixo {
+                flex-direction: column;
+            }
+            .btn-acao { max-width: 100%; }
+            
+            .alerta-horario span {
+                display: block;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📍 Itinerário Oficial - Louveira</h1>
+
+    <div class="alerta-horario">
+        <span>📅 <strong>Data:</strong> 27/04</span>
+        <span style="color: #ccc; margin: 0 10px;" class="esconder-mobile">|</span>
+        <span>⏰ <strong>Ponto de Encontro:</strong> 07h30</span>
+        <span style="color: #ccc; margin: 0 10px;" class="esconder-mobile">|</span>
+        <span>🚀 <strong>Saída:</strong> 08h30</span>
+    </div>
+
+    <p style="text-align: center; color: #555; font-size: 0.95em; margin-bottom: 25px;">
+        Acompanhe em tempo real onde a equipe está (marcado em verde).
+    </p>
+
+    <table id="tabela-itinerario">
+        <thead>
+            <tr>
+                <th>Ponto de Referência / Instituição</th>
+                <th>Via / Logradouro</th>
+                <th>Observações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td data-label="Ponto:"><strong>Início:</strong> Sec. Educação / Cecoin</td>
+                <td data-label="Local:">Praça Pe. Pedro Sanches</td>
+                <td data-label="Obs:" class="obs">Ponto de partida oficial.</td>
+            </tr>
+            <tr>
+                <td data-label="Ponto:">Trajeto</td>
+                <td data-label="Local:">Rua Nerina</td>
+                <td data-label="Obs:" class="obs">Continuar trajeto até o próximo ponto.</td>
+            </tr>
+            <tr>
+                <td data-label="Ponto:">UBS PAS</td>
+                <td data-label="Local:">Rua São Carlos</td>
+                <td data-label="Obs:" class="obs">Referência de saúde.</td>
+            </tr>
+            <tr>
+                <td data-label="Ponto:">Trajeto</td>
+                <td data-label="Local:">Rua Roberto Mazalli</td>
+                <td data-label="Obs:" class="obs">Continuar trajeto até o próximo ponto.</td>
+            </tr>
+            <tr>
+                <td data-label="Ponto:">VISA / Habitação / Cartão</td>
+                <td data-label="Local:">Rua Antonio Chicalhone</td>
+                <td data-label="Obs:" class="obs">Centro de Atendimento (Correios).</td>
+            </tr>
+            <tr>
+                <td data-label="Ponto:">Eixo Principal</td>
+                <td data-label="Local:">Av. Paulo Prado</td>
+                <td data-label="Obs:" class="obs">Continuar trajeto até o próximo ponto.</td>
+            </tr>
+            <tr>
+                <td data-label="Ponto:">Sindlouv / EMEB Peq. Brilhantes</td>
+                <td data-label="Local:">Av. Ricieri Chiquetto</td>
+                <td data-label="Obs:" class="obs"><strong>Referência:</strong> Auto Escola.</td>
+            </tr>
+            <tr>
+                <td data-label="Ponto:">EMEB Pedro Miqueletto</td>
+                <td data-label="Local:">Rua José Carlos Conti</td>
+                <td data-label="Obs:" class="obs">Retorno pela via.</td>
+            </tr>
+            <tr>
+                <td data-label="Ponto:">Defesa Civil / Trânsito</td>
+                <td data-label="Local:">Praça da Bica</td>
+                <td data-label="Obs:" class="obs">Próximo à EMEB Mundo Maravilhoso.</td>
+            </tr>
+            <tr>
+                <td data-label="Ponto:">Cecoin Chapeuzinho Vermelho</td>
+                <td data-label="Local:">R. Irmã Fidelina x R. Luis Scarance</td>
+                <td data-label="Obs:" class="obs">Trecho de subida.</td>
+            </tr>
+            <tr>
+                <td data-label="Ponto:">Trajeto Residencial</td>
+                <td data-label="Local:">Rua das Orquídeas / Evaristo Cavalli</td>
+                <td data-label="Obs:" class="obs">Continuar trajeto até o próximo ponto.</td>
+            </tr>
+            <tr>
+                <td data-label="Ponto:">Trajeto</td>
+                <td data-label="Local:">Rua Francisco Pereira</td>
+                <td data-label="Obs:" class="obs">Continuar trajeto até o próximo ponto.</td>
+            </tr>
+            <tr>
+                <td data-label="Ponto:">CRAS Santo Antônio</td>
+                <td data-label="Local:">Rua Leone Bertoline</td>
+                <td data-label="Obs:" class="obs">Assistência social.</td>
+            </tr>
+            <tr>
+                <td data-label="Ponto:">Trajeto</td>
+                <td data-label="Local:">Rua 13 de Junho</td>
+                <td data-label="Obs:" class="obs">Continuar trajeto até o próximo ponto.</td>
+            </tr>
+            <tr>
+                <td data-label="Ponto:">Fundo Social de Solidariedade</td>
+                <td data-label="Local:">Rotatória</td>
+                <td data-label="Obs:" class="obs">Número de funcionários.</td>
+            </tr>
+            <tr>
+                <td data-label="Ponto:">EMEB Odilon Leite Ferraz</td>
+                <td data-label="Local:">Rua Pascoal Dinofre</td>
+                <td data-label="Obs:" class="obs">Acesso via Rua Saul Gemi.</td>
+            </tr>
+            <tr>
+                <td data-label="Ponto:">Casa da Cultura</td>
+                <td data-label="Local:">Rua das Rosas</td>
+                <td data-label="Obs:" class="obs">Avaliar barulho.</td>
+            </tr>
+            <tr>
+                <td data-label="Ponto:"><strong>Encerramento</strong></td>
+                <td data-label="Local:">Praça da Bica</td>
+                <td data-label="Obs:" class="obs">Finalização do percurso.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="painel-fixo">
+    <button class="btn-acao btn-atual" onclick="navegarParaPontoAtual()" id="btn-ponto-atual">
+        🗺️ Rota até o Ponto Atual
+    </button>
+    <button class="btn-acao btn-completa" onclick="gerarRotaCompleta()">
+        📍 Ver Rota Completa (Todas as paradas)
+    </button>
+</div>
+
+<style>
+    @media screen and (max-width: 768px) {
+        .esconder-mobile { display: none; }
+    }
+</style>
+
+<script>
+    /* =====================================================================
+       ⚠️ ÁREA DE CONTROLE DO ADMINISTRADOR ⚠️
+       Altere o número abaixo (de 1 a 18) antes de subir o código no GitHub.
+       Isso mudará automaticamente a marcação verde e o botão de Rota.
+       ===================================================================== */
+    
+    const PONTO_ATUAL = 1; // <--- ALTERE ESTE NÚMERO AQUI (Ex: 1, 3, 10...)
+
+    /* ===================================================================== */
+
+    // Array com os endereços na ordem exata da tabela
+    const enderecosRota = [
+        "Praça Pe. Pedro Sanches, Louveira, SP", // 1
+        "Rua Nerina, Louveira, SP",              // 2
+        "Rua São Carlos, Louveira, SP",          // 3
+        "Rua Roberto Mazalli, Louveira, SP",     // 4
+        "Rua Antonio Chicalhone, Louveira, SP",  // 5
+        "Av. Paulo Prado, Louveira, SP",         // 6
+        "Av. Ricieri Chiquetto, Louveira, SP",   // 7
+        "Rua José Carlos Conti, Louveira, SP",   // 8
+        "Praça da Bica, Louveira, SP",           // 9
+        "R. Irmã Fidelina, Louveira, SP",        // 10
+        "Rua das Orquídeas / Evaristo Cavalli, Louveira, SP", // 11
+        "Rua Francisco Pereira, Louveira, SP",   // 12
+        "Rua Leone Bertoline, Louveira, SP",     // 13
+        "Rua 13 de Junho, Louveira, SP",         // 14
+        "Fundo Social de Solidariedade, Louveira, SP", // 15
+        "Rua Pascoal Dinofre, Louveira, SP",     // 16
+        "Rua das Rosas, Louveira, SP",           // 17
+        "Praça da Bica, Louveira, SP"            // 18
+    ];
+
+    // Quando a página carregar, pinta a linha atual de acordo com a variável
+    window.onload = function() {
+        let linhas = document.querySelectorAll('#tabela-itinerario tbody tr');
+        let index = PONTO_ATUAL - 1; // Ajusta porque array começa em 0
+        
+        if (index >= 0 && index < linhas.length) {
+            let linhaAtiva = linhas[index];
+            linhaAtiva.classList.add('linha-atual');
+            
+            // Insere a tag [ESTAMOS AQUI] na primeira célula da linha atual
+            let primeiraCelula = linhaAtiva.querySelector('td');
+            primeiraCelula.innerHTML = '<span class="tag-aqui">📍 EQUIPE AQUI</span><br>' + primeiraCelula.innerHTML;
+
+            // Atualiza o texto do botão para mostrar qual é o ponto
+            document.getElementById('btn-ponto-atual').innerHTML = `🗺️ Obter rota para Etapa ${PONTO_ATUAL}`;
+        }
+    };
+
+    // Função que leva o usuário do GPS dele até o PONTO_ATUAL
+    function navegarParaPontoAtual() {
+        let destino = enderecosRota[PONTO_ATUAL - 1];
+        let urlDestino = encodeURIComponent(destino);
+        
+        let botao = document.getElementById('btn-ponto-atual');
+        let textoOriginal = botao.innerHTML;
+        botao.innerHTML = "⏳ Localizando seu GPS...";
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(posicao) {
+                    let lat = posicao.coords.latitude;
+                    let lon = posicao.coords.longitude;
+                    // Abre o Maps passando a origem (GPS atual) e o destino (Endereço da linha)
+                    let urlMaps = `https://www.google.com/maps/dir/?api=1&origin=${lat},${lon}&destination=${urlDestino}`;
+                    window.open(urlMaps, '_blank');
+                    botao.innerHTML = textoOriginal;
+                }, 
+                function(erro) {
+                    alert("Não foi possível acessar seu GPS. Abriremos o mapa no destino para você inserir a partida manualmente.");
+                    let urlMapsSemOrigem = `https://www.google.com/maps/dir/?api=1&destination=${urlDestino}`;
+                    window.open(urlMapsSemOrigem, '_blank');
+                    botao.innerHTML = textoOriginal;
+                },
+                { enableHighAccuracy: true, timeout: 5000 }
+            );
+        } else {
+            let urlMapsSemOrigem = `https://www.google.com/maps/dir/?api=1&destination=${urlDestino}`;
+            window.open(urlMapsSemOrigem, '_blank');
+            botao.innerHTML = textoOriginal;
+        }
+    }
+
+    // Função que gera a URL do Google Maps com todas as paradas em sequência
+    function gerarRotaCompleta() {
+        // Constrói a URL unindo todas as ruas separadas por barras
+        let urlBase = "https://www.google.com/maps/dir/";
+        
+        // Remove duplicadas seguidas para otimizar (Ex: Encerramento na Praça da Bica)
+        let paradasOtimizadas = enderecosRota.filter((valor, indice, array) => indice === 0 || valor !== array[indice - 1]);
+        
+        let caminho = paradasOtimizadas.map(p => encodeURIComponent(p)).join('/');
+        window.open(urlBase + caminho, '_blank');
+    }
+</script>
+
+</body>
+</html>
         }
         th, td {
             padding: 12px 15px;
