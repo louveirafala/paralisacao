@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Itinerário Interativo - Louveira</title>
+    <title>Itinerário Oficial - Louveira</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f8f9fa;
             color: #343a40;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
+            padding-bottom: 100px; /* Espaço para os botões fixos no rodapé */
         }
         .container {
-            max-width: 950px;
+            max-width: 1000px;
             margin: 0 auto;
             background-color: #ffffff;
-            padding: 30px;
+            padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
@@ -25,8 +26,10 @@
             color: #0056b3;
             border-bottom: 3px solid #0056b3;
             padding-bottom: 10px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
+            font-size: 1.5em;
         }
+        
         table {
             width: 100%;
             border-collapse: collapse;
@@ -43,21 +46,9 @@
             color: #ffffff;
             font-weight: 600;
         }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        tr:hover {
-            background-color: #e2e6ea;
-        }
-        td strong {
-            color: #0056b3;
-        }
-        .obs {
-            font-size: 0.9em;
-            color: #6c757d;
-        }
+        tr:nth-child(even) { background-color: #f2f2f2; }
         
-        /* Estilo para a linha destacada (onde o usuário está) */
+        /* Destaque da linha atual gerenciada por código */
         .linha-atual {
             background-color: #d4edda !important;
             border: 2px solid #28a745;
@@ -66,240 +57,306 @@
             color: #155724;
             font-weight: bold;
         }
-
-        .btn-checkin {
-            background-color: #6c757d;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.85em;
-            transition: 0.3s;
-        }
-        .btn-checkin:hover { background-color: #5a6268; }
-        .linha-atual .btn-checkin {
+        .tag-aqui {
+            display: inline-block;
             background-color: #28a745;
-            cursor: default;
-        }
-
-        .map-section {
-            text-align: center;
-            padding: 25px;
-            background-color: #e9ecef;
-            border-radius: 8px;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+            font-weight: bold;
         }
         
-        .geo-btn {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: #17a2b8;
-            color: #ffffff;
+        .obs { font-size: 0.9em; color: #6c757d; }
+
+        /* Painel de Botões Fixos */
+        .painel-fixo {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.15);
+            padding: 15px;
+            box-sizing: border-box;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .btn-acao {
+            flex: 1;
+            max-width: 400px;
             border: none;
-            border-radius: 5px;
+            padding: 15px 10px;
+            border-radius: 8px;
             font-weight: bold;
             font-size: 1em;
             cursor: pointer;
-            margin-bottom: 15px;
-            transition: background-color 0.3s;
+            transition: 0.3s;
+            text-align: center;
+            color: white;
         }
-        .geo-btn:hover { background-color: #138496; }
+        .btn-atual { background-color: #17a2b8; }
+        .btn-atual:hover { background-color: #138496; }
+        .btn-completa { background-color: #6c757d; }
+        .btn-completa:hover { background-color: #5a6268; }
 
-        .map-button {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: #28a745;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-            font-size: 1.1em;
-            transition: background-color 0.3s;
-            margin-top: 10px;
-        }
-        .map-button:hover { background-color: #218838; }
-        .geo-status {
-            font-size: 0.95em;
-            color: #d32f2f;
-            margin-bottom: 10px;
-            font-weight: bold;
+        /* Ajustes Mobile (Cards) */
+        @media screen and (max-width: 768px) {
+            table { border: 0; }
+            table thead { display: none; }
+            table tr {
+                display: block;
+                margin-bottom: 20px;
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+                background-color: #fff;
+                padding-bottom: 10px;
+            }
+            table td {
+                display: block;
+                text-align: right;
+                font-size: 0.95em;
+                border-bottom: 1px solid #eee;
+                padding-left: 45%;
+                position: relative;
+            }
+            table td:last-child { border-bottom: 0; }
+            table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 15px;
+                width: 40%;
+                text-align: left;
+                font-weight: bold;
+                color: #0056b3;
+            }
+            .obs { text-align: right; }
+            .painel-fixo {
+                flex-direction: column;
+            }
+            .btn-acao { max-width: 100%; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>📍 Itinerário Interativo - Louveira</h1>
-    <p style="text-align: center; color: #555; margin-bottom: 25px;">
-        Clique em "Estou Aqui" para marcar em qual etapa do trajeto você se encontra no momento.
+    <h1>📍 Itinerário Oficial - Louveira</h1>
+    <p style="text-align: center; color: #555; font-size: 0.95em; margin-bottom: 25px;">
+        Acompanhe em tempo real onde a equipe está (marcado em verde).
     </p>
 
     <table id="tabela-itinerario">
         <thead>
             <tr>
-                <th>Status</th>
                 <th>Ponto de Referência / Instituição</th>
                 <th>Via / Logradouro</th>
-                <th>Observações e Ações</th>
+                <th>Observações</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td><button class="btn-checkin" onclick="marcarLocal(this)">📍 Estou Aqui</button></td>
-                <td><strong>Início:</strong> Sec. Educação / Cecoin</td>
-                <td>Praça Pe. Pedro Sanches</td>
-                <td class="obs">Ponto de partida oficial.</td>
+                <td data-label="Ponto:"><strong>Início:</strong> Sec. Educação / Cecoin</td>
+                <td data-label="Local:">Praça Pe. Pedro Sanches</td>
+                <td data-label="Obs:" class="obs">Ponto de partida oficial.</td>
             </tr>
             <tr>
-                <td><button class="btn-checkin" onclick="marcarLocal(this)">📍 Estou Aqui</button></td>
-                <td>Trajeto</td>
-                <td>Rua Nerina</td>
-                <td class="obs">Seguir trajeto.</td>
+                <td data-label="Ponto:">Trajeto</td>
+                <td data-label="Local:">Rua Nerina</td>
+                <td data-label="Obs:" class="obs">Seguir trajeto.</td>
             </tr>
             <tr>
-                <td><button class="btn-checkin" onclick="marcarLocal(this)">📍 Estou Aqui</button></td>
-                <td>UBS PAS</td>
-                <td>Rua São Carlos</td>
-                <td class="obs">Referência de saúde.</td>
+                <td data-label="Ponto:">UBS PAS</td>
+                <td data-label="Local:">Rua São Carlos</td>
+                <td data-label="Obs:" class="obs">Referência de saúde.</td>
             </tr>
             <tr>
-                <td><button class="btn-checkin" onclick="marcarLocal(this)">📍 Estou Aqui</button></td>
-                <td>Trajeto</td>
-                <td>Rua Roberto Mazalli</td>
-                <td class="obs">Seguir trajeto.</td>
+                <td data-label="Ponto:">Trajeto</td>
+                <td data-label="Local:">Rua Roberto Mazalli</td>
+                <td data-label="Obs:" class="obs">Seguir trajeto.</td>
             </tr>
             <tr>
-                <td><button class="btn-checkin" onclick="marcarLocal(this)">📍 Estou Aqui</button></td>
-                <td>VISA / Habitação / Cartão Cidadão</td>
-                <td>Rua Antonio Chicalhone</td>
-                <td class="obs"><strong>Parada:</strong> Centro de Atendimento (Correios).</td>
+                <td data-label="Ponto:">VISA / Habitação / Cartão</td>
+                <td data-label="Local:">Rua Antonio Chicalhone</td>
+                <td data-label="Obs:" class="obs">Centro de Atendimento (Correios).</td>
             </tr>
             <tr>
-                <td><button class="btn-checkin" onclick="marcarLocal(this)">📍 Estou Aqui</button></td>
-                <td>Eixo Principal</td>
-                <td>Av. Paulo Prado</td>
-                <td class="obs">Seguir trajeto.</td>
+                <td data-label="Ponto:">Eixo Principal</td>
+                <td data-label="Local:">Av. Paulo Prado</td>
+                <td data-label="Obs:" class="obs">Seguir trajeto.</td>
             </tr>
             <tr>
-                <td><button class="btn-checkin" onclick="marcarLocal(this)">📍 Estou Aqui</button></td>
-                <td>Sindlouv / EMEB Peq. Brilhantes</td>
-                <td>Av. Ricieri Chiquetto</td>
-                <td class="obs"><strong>Referência:</strong> Auto Escola.</td>
+                <td data-label="Ponto:">Sindlouv / EMEB Peq. Brilhantes</td>
+                <td data-label="Local:">Av. Ricieri Chiquetto</td>
+                <td data-label="Obs:" class="obs"><strong>Referência:</strong> Auto Escola.</td>
             </tr>
             <tr>
-                <td><button class="btn-checkin" onclick="marcarLocal(this)">📍 Estou Aqui</button></td>
-                <td>Defesa Civil / Trânsito</td>
-                <td>Praça da Bica</td>
-                <td class="obs">Próximo à EMEB Mundo Maravilhoso.</td>
+                <td data-label="Ponto:">EMEB Pedro Miqueletto</td>
+                <td data-label="Local:">Rua José Carlos Conti</td>
+                <td data-label="Obs:" class="obs">Retorno pela via.</td>
             </tr>
             <tr>
-                <td><button class="btn-checkin" onclick="marcarLocal(this)">📍 Estou Aqui</button></td>
-                <td>CRAS Santo Antônio</td>
-                <td>Rua Leone Bertoline</td>
-                <td class="obs">Assistência social.</td>
+                <td data-label="Ponto:">Defesa Civil / Trânsito</td>
+                <td data-label="Local:">Praça da Bica</td>
+                <td data-label="Obs:" class="obs">Próximo à EMEB Mundo Maravilhoso.</td>
             </tr>
             <tr>
-                <td><button class="btn-checkin" onclick="marcarLocal(this)">📍 Estou Aqui</button></td>
-                <td>Fundo Social de Solidariedade</td>
-                <td>Rotatória</td>
-                <td class="obs"><strong>Ponto de Fala:</strong> Número de funcionários.</td>
+                <td data-label="Ponto:">Cecoin Chapeuzinho Vermelho</td>
+                <td data-label="Local:">R. Irmã Fidelina x R. Luis Scarance</td>
+                <td data-label="Obs:" class="obs">Trecho de subida.</td>
             </tr>
             <tr>
-                <td><button class="btn-checkin" onclick="marcarLocal(this)">📍 Estou Aqui</button></td>
-                <td>Casa da Cultura</td>
-                <td>Rua das Rosas</td>
-                <td class="obs">Avaliar barulho.</td>
+                <td data-label="Ponto:">Trajeto Residencial</td>
+                <td data-label="Local:">Rua das Orquídeas</td>
+                <td data-label="Obs:" class="obs">Evaristo Cavalli.</td>
             </tr>
             <tr>
-                <td><button class="btn-checkin" onclick="marcarLocal(this)">📍 Estou Aqui</button></td>
-                <td><strong>Encerramento</strong></td>
-                <td>Praça da Bica</td>
-                <td class="obs">Finalização do percurso.</td>
+                <td data-label="Ponto:">Trajeto</td>
+                <td data-label="Local:">Rua Francisco Pereira</td>
+                <td data-label="Obs:" class="obs">Seguir trajeto.</td>
+            </tr>
+            <tr>
+                <td data-label="Ponto:">CRAS Santo Antônio</td>
+                <td data-label="Local:">Rua Leone Bertoline</td>
+                <td data-label="Obs:" class="obs">Assistência social.</td>
+            </tr>
+            <tr>
+                <td data-label="Ponto:">Trajeto</td>
+                <td data-label="Local:">Rua 13 de Junho</td>
+                <td data-label="Obs:" class="obs">Seguir trajeto.</td>
+            </tr>
+            <tr>
+                <td data-label="Ponto:">Fundo Social de Solidariedade</td>
+                <td data-label="Local:">Rotatória</td>
+                <td data-label="Obs:" class="obs">Número de funcionários.</td>
+            </tr>
+            <tr>
+                <td data-label="Ponto:">EMEB Odilon Leite Ferraz</td>
+                <td data-label="Local:">Rua Pascoal Dinofre</td>
+                <td data-label="Obs:" class="obs">Acesso via Rua Saul Gemi.</td>
+            </tr>
+            <tr>
+                <td data-label="Ponto:">Casa da Cultura</td>
+                <td data-label="Local:">Rua das Rosas</td>
+                <td data-label="Obs:" class="obs">Avaliar barulho.</td>
+            </tr>
+            <tr>
+                <td data-label="Ponto:"><strong>Encerramento</strong></td>
+                <td data-label="Local:">Praça da Bica</td>
+                <td data-label="Obs:" class="obs">Finalização do percurso.</td>
             </tr>
         </tbody>
     </table>
+</div>
 
-    <div class="map-section">
-        <h3>📡 Conectar ao meu GPS</h3>
-        <p>Use a antena do seu celular ou computador para criar a rota de onde você está agora até o itinerário.</p>
-        
-        <div id="geo-status" class="geo-status">Localização ainda não capturada.</div>
-        
-        <button class="geo-btn" onclick="buscarLocalizacao()">
-            🛰️ Encontrar Minha Localização Atual
-        </button>
-        <br>
-        
-        <a id="link-mapa" href="https://www.google.com/maps/dir/?api=1&destination=Praça+Pe.+Pedro+Sanches,+Louveira,+SP" target="_blank" class="map-button">
-            🗺️ Abrir Rota no Google Maps
-        </a>
-    </div>
+<div class="painel-fixo">
+    <button class="btn-acao btn-atual" onclick="navegarParaPontoAtual()" id="btn-ponto-atual">
+        🗺️ Rota até o Ponto Atual
+    </button>
+    <button class="btn-acao btn-completa" onclick="gerarRotaCompleta()">
+        📍 Ver Rota Completa (Todas as paradas)
+    </button>
 </div>
 
 <script>
-    // Função para marcar onde a pessoa está na tabela
-    function marcarLocal(botao) {
-        // Remove a marcação de todas as linhas
+    /* =====================================================================
+       ⚠️ ÁREA DE CONTROLE DO ADMINISTRADOR ⚠️
+       Altere o número abaixo (de 1 a 18) antes de subir o código no GitHub.
+       Isso mudará automaticamente a marcação verde e o botão de Rota.
+       ===================================================================== */
+    
+    const PONTO_ATUAL = 4; // <--- ALTERE ESTE NÚMERO AQUI (Ex: 1, 3, 10...)
+
+    /* ===================================================================== */
+
+    // Array com os endereços na ordem exata da tabela
+    const enderecosRota = [
+        "Praça Pe. Pedro Sanches, Louveira, SP", // 1
+        "Rua Nerina, Louveira, SP",              // 2
+        "Rua São Carlos, Louveira, SP",          // 3
+        "Rua Roberto Mazalli, Louveira, SP",     // 4
+        "Rua Antonio Chicalhone, Louveira, SP",  // 5
+        "Av. Paulo Prado, Louveira, SP",         // 6
+        "Av. Ricieri Chiquetto, Louveira, SP",   // 7
+        "Rua José Carlos Conti, Louveira, SP",   // 8
+        "Praça da Bica, Louveira, SP",           // 9
+        "R. Irmã Fidelina, Louveira, SP",        // 10
+        "Rua das Orquídeas, Louveira, SP",       // 11
+        "Rua Francisco Pereira, Louveira, SP",   // 12
+        "Rua Leone Bertoline, Louveira, SP",     // 13
+        "Rua 13 de Junho, Louveira, SP",         // 14
+        "Fundo Social de Solidariedade, Louveira, SP", // 15
+        "Rua Pascoal Dinofre, Louveira, SP",     // 16
+        "Rua das Rosas, Louveira, SP",           // 17
+        "Praça da Bica, Louveira, SP"            // 18
+    ];
+
+    // Quando a página carregar, pinta a linha atual de acordo com a variável
+    window.onload = function() {
         let linhas = document.querySelectorAll('#tabela-itinerario tbody tr');
-        linhas.forEach(linha => {
-            linha.classList.remove('linha-atual');
-            let btn = linha.querySelector('.btn-checkin');
-            btn.innerHTML = "📍 Estou Aqui";
-        });
+        let index = PONTO_ATUAL - 1; // Ajusta porque array começa em 0
+        
+        if (index >= 0 && index < linhas.length) {
+            let linhaAtiva = linhas[index];
+            linhaAtiva.classList.add('linha-atual');
+            
+            // Insere a tag [ESTAMOS AQUI] na primeira célula da linha atual
+            let primeiraCelula = linhaAtiva.querySelector('td');
+            primeiraCelula.innerHTML = '<span class="tag-aqui">📍 EQUIPE AQUI</span><br>' + primeiraCelula.innerHTML;
 
-        // Adiciona a marcação na linha clicada
-        let linhaClicada = botao.parentElement.parentElement;
-        linhaClicada.classList.add('linha-atual');
-        botao.innerHTML = "✅ Você está aqui";
-    }
+            // Atualiza o texto do botão para mostrar qual é o ponto
+            document.getElementById('btn-ponto-atual').innerHTML = `🗺️ Obter rota para Etapa ${PONTO_ATUAL}`;
+        }
+    };
 
-    // Função para buscar o GPS do usuário via navegador
-    function buscarLocalizacao() {
-        let statusTexto = document.getElementById("geo-status");
-        statusTexto.innerHTML = "⏳ Buscando sinal de GPS... Por favor, permita o acesso.";
-        statusTexto.style.color = "#ff9800";
+    // Função que leva o usuário do GPS dele até o PONTO_ATUAL
+    function navegarParaPontoAtual() {
+        let destino = enderecosRota[PONTO_ATUAL - 1];
+        let urlDestino = encodeURIComponent(destino);
+        
+        let botao = document.getElementById('btn-ponto-atual');
+        let textoOriginal = botao.innerHTML;
+        botao.innerHTML = "⏳ Localizando seu GPS...";
 
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(sucessoGPS, erroGPS);
+            navigator.geolocation.getCurrentPosition(
+                function(posicao) {
+                    let lat = posicao.coords.latitude;
+                    let lon = posicao.coords.longitude;
+                    // Abre o Maps passando a origem (GPS atual) e o destino (Endereço da linha)
+                    let urlMaps = `https://www.google.com/maps/dir/?api=1&origin=${lat},${lon}&destination=${urlDestino}`;
+                    window.open(urlMaps, '_blank');
+                    botao.innerHTML = textoOriginal;
+                }, 
+                function(erro) {
+                    alert("Não foi possível acessar seu GPS. Abriremos o mapa no destino para você inserir a partida manualmente.");
+                    let urlMapsSemOrigem = `https://www.google.com/maps/dir/?api=1&destination=${urlDestino}`;
+                    window.open(urlMapsSemOrigem, '_blank');
+                    botao.innerHTML = textoOriginal;
+                },
+                { enableHighAccuracy: true, timeout: 5000 }
+            );
         } else {
-            statusTexto.innerHTML = "❌ Seu navegador não suporta geolocalização.";
-            statusTexto.style.color = "#d32f2f";
+            let urlMapsSemOrigem = `https://www.google.com/maps/dir/?api=1&destination=${urlDestino}`;
+            window.open(urlMapsSemOrigem, '_blank');
+            botao.innerHTML = textoOriginal;
         }
     }
 
-    // Se conseguir pegar a localização do usuário
-    function sucessoGPS(posicao) {
-        let lat = posicao.coords.latitude;
-        let lon = posicao.coords.longitude;
+    // Função que gera a URL do Google Maps com todas as paradas em sequência
+    function gerarRotaCompleta() {
+        // Constrói a URL unindo todas as ruas separadas por barras
+        let urlBase = "https://www.google.com/maps/dir/";
         
-        let statusTexto = document.getElementById("geo-status");
-        statusTexto.innerHTML = "✅ Sinal encontrado! O mapa foi atualizado com a sua posição exata.";
-        statusTexto.style.color = "#28a745";
-
-        // Atualiza o link do Google Maps para traçar rota da localização atual do usuário até a Praça
-        let linkMapa = document.getElementById("link-mapa");
-        linkMapa.href = `https://www.google.com/maps/dir/?api=1&origin=${lat},${lon}&destination=Praça+Pe.+Pedro+Sanches,+Louveira,+SP`;
-        linkMapa.innerHTML = "🗺️ Iniciar Rota a partir daqui";
-    }
-
-    // Se der erro ao tentar pegar a localização
-    function erroGPS(erro) {
-        let statusTexto = document.getElementById("geo-status");
-        statusTexto.style.color = "#d32f2f";
-        switch(erro.code) {
-            case erro.PERMISSION_DENIED:
-                statusTexto.innerHTML = "❌ Você negou o pedido de localização.";
-                break;
-            case erro.POSITION_UNAVAILABLE:
-                statusTexto.innerHTML = "❌ Informações de localização indisponíveis.";
-                break;
-            case erro.TIMEOUT:
-                statusTexto.innerHTML = "❌ A requisição demorou muito para responder.";
-                break;
-            default:
-                statusTexto.innerHTML = "❌ Ocorreu um erro desconhecido no GPS.";
-                break;
-        }
+        // Remove duplicadas seguidas para otimizar (Ex: Encerramento na Praça da Bica)
+        let paradasOtimizadas = enderecosRota.filter((valor, indice, array) => indice === 0 || valor !== array[indice - 1]);
+        
+        let caminho = paradasOtimizadas.map(p => encodeURIComponent(p)).join('/');
+        window.open(urlBase + caminho, '_blank');
     }
 </script>
 
